@@ -1,5 +1,6 @@
 
 clear
+addpath('../../');
 %2 by number trials matrix of response data
 I = [ 0   NaN     0   NaN     0   NaN     0   NaN     0   NaN     0   NaN     0   NaN     0   NaN     0   NaN ...
       0   NaN     1   NaN     1   NaN     0   NaN     0   NaN     0   NaN     0   NaN     1   NaN     0   NaN ...

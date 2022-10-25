@@ -142,7 +142,7 @@ his_filename = fullfileKPM(workingDir, 'history.txt');
 if wine
     scriptFile = [Bugdir,filesep,'script.txt'];
 else
-    scriptFile = [Bugdir,'\','script.txt'];
+    scriptFile = [pwd,'\','script.txt'];
 end
 
 %bugsModel = [pwd, '/', bugsModel];
@@ -188,7 +188,7 @@ initfileN = size(initStructs,2);
 for i=1:initfileN
   initFileName = fullfileKPM(workingDir, ['init_', num2str(i) '.txt']);
   dataGen(initStructs(i), initFileName)
-  if openBUGS,
+  if openBUGS
       fprintf(fid, 'modelInits(''%s'', %u)\n', [pathPrefix,initFileName], i); % Misha Koshelev Nov 26th 2009
  else
      fprintf(fid, 'inits (%u, ''%s'')\n', i, [pathPrefix,initFileName]); % Misha Koshelev Nov 26th 2009
@@ -274,20 +274,27 @@ fclose(fid);
 
 if openBUGS
     % bug fix by Chris Moore christopher.moore@unsw.edu.au
-    f = fullfile(Bugdir, 'OpenBUGS.exe');   
- %f = fullfile(Bugdir, 'winbugs.exe');
+    f = fullfile(Bugdir, 'OpenBUGS.exe');
 else
  % fix for wine Misha Koshelev 26 Nov 2009
- if wine
-     f = fullfile(Bugdir, 'WinBUGS14.exe');
- else
-     f = fullfile(Bugdir, 'Winbugs14.exe');
- end
- %str = ['"', Bugdir, '\Winbugs14.exe" /PAR script.txt'];
+% if wine
+    f = fullfile(Bugdir, 'WinBUGS14.exe');
+% else
+%     f = fullfile(Bugdir, 'Winbugs14.exe');
+% end
 end
-str = ['"',f,'" /PAR script.txt'];
-dos(str); % DOS wants a\b
+%str = ['"',f,'" /PAR ',script.txt'];
+%dos(str); % DOS wants a\b
+str = ['"',f,'" \PAR "',scriptFile,'"'];
 
+% Add pause so script can be run outside of MATLAB
+
+disp('Matbugs has been paused due to issues with running WinBugs.');
+fprintf(strcat("To run WinBugs, please open your Command Prompt on Windows and enter the following command\n\n"));
+disp(str);
+fprintf(strcat("\nPlease run the command. WinBugs should open, displaying the script file."));
+fprintf("\nOn the top bar select 'Model'>'Script' and wait for the script to finish running.\n")
+input("After it has completed, hit ENTER in the Command Window to continue matbugs.");
 
 % passing the coda files to bugs2mat to convert files to structs
 if openBUGS

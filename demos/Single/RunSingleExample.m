@@ -5,7 +5,7 @@
 
 %Ipaper is the data (binary vector)
 clear
-addpath('../');
+addpath('../../');
 
 I = [zeros(1,10) 1 1 0 0 0 0 1 0 0 ones(1,11)];
 
