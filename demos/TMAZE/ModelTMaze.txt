@@ -1,0 +1,67 @@
+ 
+Model{#T maze example
+
+#first do responses################################################
+
+for (t in 1:T) { for (j in 1:2) {
+                       x[j, t]         ~ dnorm( mu[j, t], tau[j]) ;
+                       n[j,t ]         ~  dbern(p[j, t]);
+                       logit(p[j, t]) <-  x[j, t] ; 
+                  }}
+
+
+mu[1, 1] ~ dnorm(mu1, tau[1] ) 
+mu[2, 1] ~ dnorm(mu2, tau[2])  
+
+
+for (t in 2:T) { for (j in 1:2) {
+                 mu[j, t] <-   x[j, t-1]
+                      }}
+
+#priors
+
+mu1   ~ dunif(-3, 3)
+mu2  <- - mu1      #relation between left and right initial conditions
+
+for  (i in 1:4) { 
+   
+   tau[i] ~ dgamma(5,1) # a quite strong prior 
+                          # really uninformative priors can cause instability
+
+  }
+
+#now do for behavior also###########################################
+
+for (t in 1:T) {       xb[t]         ~ dnorm( mub[t], taub) ;
+                       le[t ]        ~  dbern(pb[t]);
+                       logit(pb[t])  <-  xb[t] ; 
+                  }
+
+
+mub[1] ~ dnorm(mu1b, taub) # initial condition
+
+
+for (t in 2:T) { 
+                 mub[t] <- xb[ t-1] 
+                      }
+
+#priors
+
+mu1b   ~ dunif(-3, 3)  #
+taub  ~  dgamma(5,1)
+
+
+#compute the final probabilities
+
+for (t in 1:T) {       
+         finalpn[1,t] <- exp( xb[t]+x[1,t])/(1 + exp(xb[t]+x[1,t]) ); 
+	 finalpn[2,t] <- exp(-xb[t]+x[2,t])/(1 + exp(-xb[t]+x[2,t]) );
+		
+                  }
+
+
+ }
+
+
+
+
